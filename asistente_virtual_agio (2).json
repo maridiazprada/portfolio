@@ -1,0 +1,773 @@
+{
+  "name": "asistente virtual agio",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Eres un asistente virtual de Agioletto, una fábrica de muebles personalizados. Tu tarea es atender a potenciales clientes, guiarlos con amabilidad, y ayudarlos a avanzar en el proceso de compra. Usás la información del documento “Servicios Letto (para n8n)” para responder de manera efectiva.\n\n## Lenguaje\nProfesional, cercano y empático. Podés usar emojis moderados para dar calidez.\n\n## Instrucciones:\nRespondé exclusivamente con un JSON que contenga:\n- `\"respuestausuario\"`: el texto que enviarías al cliente.\n- `\"intencion\"`: la intención detectada según el mensaje recibido.\n\n\n## Clasificación de \"intencion\":\n\n### \"consulta_general\"\n- El cliente saluda o pide info general (“Hola”, “Quiero info”, “Hacen muebles?”)\n\n### \"consulta_producto\"\n- Menciona que vio algo en redes, o manda una foto sin contexto\n\n### \"pedido_presupuesto\"\n- Pregunta por precio de camas, escritorios o dormitorios\n\n### \"personalizacion\"\n- Pregunta si se puede cambiar el diseño, colores o distribución\n\n### \"envio_medidas\"\n- Envía medidas, fotos del espacio, planos\n\n### \"consulta_pago_entrega\"\n- Pregunta por cuotas, tiempos de entrega o formas de pago\n\n### \"seguimiento\"\n- Dice que ya habló antes, o retoma una conversación anterior\n\n### \"listo_para_derivar\"\n- Dice que quiere avanzar, pide que lo contacten, o acepta derivación\n\nPara determinar la \"intencion\" del usuario consulta en tu memoria la conversación que has tenido para que logres clasificar su \"intencion\" de manera correcta.\n\n⚠️ Siempre hacé una pregunta al final para mantener al cliente interesado.\n⚠️ Mencioná el catálogo si el mensaje es poco claro o incluye solo una imagen.\n\nNo incluyas explicaciones adicionales ni texto fuera del JSON.\n\nResponde únicamente usando minúsculas para el estado.\n\nEjemplo de salida en JSON:\n\n{\n\n\"respuestausuario\": \"aquí va la respuesta para el usuario\",\n\n\"intencion\": \"neutral\"\n\n}"
+        }
+      },
+      "id": "307321fd-265b-4a79-8293-72b633514098",
+      "name": "ai",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -940,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-2024-11-20",
+        "options": {
+          "temperature": 0.6
+        }
+      },
+      "id": "9b880961-f977-4a41-8ace-937a711364af",
+      "name": "model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        -1040,
+        480
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "6KgbZWEt4sd90MsY",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('new_message').item.json.body[\"message[add][0][chat_id]\"] }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -920,
+        480
+      ],
+      "id": "4c26ce39-2654-497f-9f3f-a9aa0011daab",
+      "name": "memory"
+    },
+    {
+      "parameters": {
+        "content": "### Traducción de voz a texto",
+        "height": 200,
+        "width": 580,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2340,
+        340
+      ],
+      "typeVersion": 1,
+      "id": "8c0b2564-93d6-4d83-a0c7-c3d0150c8fda",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b7aef447-b01e-41b3-948d-e222ef60c3d4",
+              "name": "text",
+              "value": "={{ $json.text || $('new_message').item.json.body[\"message[add][0][text]\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c92f3200-4827-44c9-9fe8-0f83098792ce",
+      "name": "setText",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1260,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('new_message').item.json.body[\"account[_links][self]\"] }}/ajax/v1/chats/session",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Requested-With",
+              "value": "XMLHttpRequest"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "request[chats][session][action]",
+              "value": "create"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "4b6982a4-d95d-441d-bc26-6b2d53842324",
+      "name": "Get token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -140,
+        260
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5KsSyWMM9p7Qsv3y",
+          "name": "proyectos agio - kommo - credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Respuesta",
+        "height": 200,
+        "width": 360,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -260,
+        220
+      ],
+      "typeVersion": 1,
+      "id": "6c144175-402c-4888-95b3-59209509fd19",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "7af00909-e493-4c66-b1f7-bb955f27943c",
+        "options": {}
+      },
+      "id": "7ca556a2-db02-4e73-a0f5-411e677884c1",
+      "name": "new_message",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2880,
+        400
+      ],
+      "webhookId": "7af00909-e493-4c66-b1f7-bb955f27943c"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.body[\"account[_links][self]\"] + \"/api/v4/\" + $json.body[\"message[add][0][entity_type]\"] + \"s/\" + $json.body[\"message[add][0][entity_id]\"] }}\n\n",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "07d47ec4-8575-4272-bec7-a6f27cb2ef1c",
+      "name": "Credenciales_Kommo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2680,
+        400
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5KsSyWMM9p7Qsv3y",
+          "name": "proyectos agio - kommo - credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.data.parseJson()._embedded.tags.some(t => t.name === 'stop_ai') }}",
+                    "rightValue": 62821670,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "no stop_ai tag"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -2200,
+        380
+      ],
+      "id": "50b7a24a-ddb1-41d6-b2cf-8669b59e22fb",
+      "name": "Parar la IA"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "67b91075-5506-4080-b0ab-8b2712d3e394",
+              "leftValue": "={{ $('new_message').item.json.body[\"message[add][0][attachment][type]\"] }}",
+              "rightValue": "=voice",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "9d24d05b-5d53-40a6-b9c1-981d399c3e90",
+              "leftValue": "={{ !!$('new_message').item.json.body[\"message[add][0][attachment][link]\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0725817c-074b-4bba-ba31-cb54838c2dc4",
+      "name": "¿Es Voz?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2000,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('new_message').item.json.body[\"message[add][0][attachment][link]\"] }}",
+        "options": {}
+      },
+      "id": "54a4282b-7ba4-4322-8720-6b2a3fae3851",
+      "name": "Extrae Voz",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1700,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "fb0c422f-b7a8-41d6-9ede-0a5ee84a97e4",
+      "name": "Mensaje a txt",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1480,
+        200
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "6KgbZWEt4sd90MsY",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://amojo.kommo.com/v1/chats/{{ $json.response.chats.session.account.id }}/{{ $('new_message').item.json.body['message[add][0][chat_id]'] }}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Requested-With",
+              "value": "XMLHttpRequest"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/x-www-form-urlencoded"
+            },
+            {
+              "name": "X-Auth-Token",
+              "value": "={{ $json.response.chats.session.access_token }}"
+            },
+            {
+              "name": "chatId",
+              "value": "={{ $('new_message').item.json.body['message[add][0][chat_id]'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "silent",
+              "value": "false"
+            },
+            {
+              "name": "priority",
+              "value": "low"
+            },
+            {
+              "name": "crm_entity[id]",
+              "value": "={{ $('new_message').item.json.body['message[add][0][entity_id]'] }}"
+            },
+            {
+              "name": "crm_entity[type]",
+              "value": "={{ $('new_message').item.json.body['message[add][0][element_type]'] }}"
+            },
+            {
+              "name": "persona_name",
+              "value": "={{ $json.response.chats.session.user.name }}"
+            },
+            {
+              "name": "persona_avatar",
+              "value": "={{ $json.response.chats.session.user.avatar }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $('Switch1').item.json.output.respuestaUsuario }}"
+            },
+            {
+              "name": "recipient_id",
+              "value": "={{ $('new_message').item.json.body['message[add][0][author][id]'] }}"
+            },
+            {
+              "name": "group_id"
+            },
+            {
+              "name": "crm_dialog_id",
+              "value": "={{ $('new_message').item.json.body['message[add][0][talk_id]'] }}"
+            },
+            {
+              "name": "crm_contact_id",
+              "value": "={{ $('new_message').item.json.body['message[add][0][contact_id]'] }}"
+            },
+            {
+              "name": "crm_account_id",
+              "value": "={{ $('new_message').item.json.body['account[id]'] }}"
+            },
+            {
+              "name": "skip_link_shortener",
+              "value": "false"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "a635d13d-a6c0-4ffc-957d-dbbfa5ff4e3a",
+      "name": "Enviar el mensaje",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        20,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1-iURnQdwdbEl4AQSbOwkWu45o530Np_bCEWCZ4FU7oI/edit?usp=sharing",
+        "simple": false
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -800,
+        480
+      ],
+      "id": "1fb83c48-d584-4f1b-a5bd-9dffebc1bc94",
+      "name": "Google Docs",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"respuestaUsuario\": \"string\",\n\"intencion\": \"string\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -680,
+        480
+      ],
+      "id": "5ac2d9a5-8308-4939-a099-b0c5767bb610",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.intencion }}",
+                    "rightValue": "molesto",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "5c488cf7-4046-449c-86be-92b547891211"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "22311a11-8403-4c13-9b87-dcfb1b2235df",
+                    "leftValue": "={{ $json.output.intencion }}",
+                    "rightValue": "neutral",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -580,
+        260
+      ],
+      "id": "4b205085-964d-4ed4-a0a5-2c0069e58153",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://agiolettochat.kommo.com/api/v4/leads/{{ $('new_message').item.json.body['message[add][0][entity_id]'] }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "authorization",
+              "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjdjNjM1NDg2ZTFjODlmMzlmZmUzMTVkOTZkYjc1MzRjYzA5MTE3M2E3MWFlNzA5NjQ0MTQxN2RkZDFkNmY5ZDJmMjU3MWVmMGQzZWFmMzhiIn0.eyJhdWQiOiI3ODNhNzc2Zi1kMTZjLTRlZGItYTg3OC1iODBjM2JiMTFkZGYiLCJqdGkiOiI3YzYzNTQ4NmUxYzg5ZjM5ZmZlMzE1ZDk2ZGI3NTM0Y2MwOTExNzNhNzFhZTcwOTY0NDE0MTdkZGQxZDZmOWQyZjI1NzFlZjBkM2VhZjM4YiIsImlhdCI6MTc0NjA0NjQ5NywibmJmIjoxNzQ2MDQ2NDk3LCJleHAiOjE3NjI0NzM2MDAsInN1YiI6IjEzMDUzMjU1IiwiZ3JhbnRfdHlwZSI6IiIsImFjY291bnRfaWQiOjM0NDY3NTMxLCJiYXNlX2RvbWFpbiI6ImtvbW1vLmNvbSIsInZlcnNpb24iOjIsInNjb3BlcyI6WyJjcm0iLCJmaWxlcyIsImZpbGVzX2RlbGV0ZSIsIm5vdGlmaWNhdGlvbnMiLCJwdXNoX25vdGlmaWNhdGlvbnMiXSwiaGFzaF91dWlkIjoiYTgyOWZlMjMtZGEyZC00OWUzLWEyYTItOTU5MTczYmM3MGY0IiwiYXBpX2RvbWFpbiI6ImFwaS1jLmtvbW1vLmNvbSJ9.GpI-dyEPO9dkmq2eV57Ree8iwUo4uTZ7HCmfX_zEHnLn0ZkrOECuPut0DVpV0pHd93Ggw1zxeKNqVze79MFzoNk9QeS2gi4wXX4CQSyw8rTiEQiWvEh4hDxqfW8FVzlINRiCoSmUjEIF5gZMhBn_GchuxLyr4xAqB7TRi_2XUtiDlm4RqcSF-Se3B3V424dhJue1v54Snjsxy9e70kohfyqjlNtIcJ1V81lzNtqYl7e6p3Y1zFKBRG9JW0PQLIckyhgH-NWf_JU8yZwezTmp05Lv7GAEbZK-fWpH1H-4_OUuRO_j0alB10yfFp2msF0Kd_AW3x1LOg9PoVx9YSDckw"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n\"status_id\":84086851\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "db0bce9c-1e29-4c3a-994e-d4659ee5c5ac",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f683dbe0-3394-4f3d-aac5-ec2ecd4a4e45",
+              "leftValue": "={{ $('new_message').item.json.body['message[add][0][origin]'] }}",
+              "rightValue": "telegram",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2500,
+        400
+      ],
+      "id": "699349f0-d70a-44c7-bf15-2320d3fa2473",
+      "name": "If"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "ai": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "ai",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "ai",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "setText": {
+      "main": [
+        [
+          {
+            "node": "ai",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get token": {
+      "main": [
+        [
+          {
+            "node": "Enviar el mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "new_message": {
+      "main": [
+        [
+          {
+            "node": "Credenciales_Kommo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Credenciales_Kommo": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parar la IA": {
+      "main": [
+        [
+          {
+            "node": "¿Es Voz?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Voz?": {
+      "main": [
+        [
+          {
+            "node": "Extrae Voz",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "setText",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrae Voz": {
+      "main": [
+        [
+          {
+            "node": "Mensaje a txt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje a txt": {
+      "main": [
+        [
+          {
+            "node": "setText",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs": {
+      "ai_tool": [
+        [
+          {
+            "node": "ai",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "ai",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Parar la IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ce36adce-7704-4a35-8793-01b73a56b2ad",
+  "meta": {
+    "instanceId": "a361c99fff016ed20927848e2faa8f35601d252bdb67af0520aa1652af4d6de8"
+  },
+  "id": "JwdJR8VklDZzu0rb",
+  "tags": []
+}

@@ -1,0 +1,1163 @@
+{
+  "name": "act precios NEW",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1700,
+        1480
+      ],
+      "id": "364838f9-b32f-4240-8924-a6c6f6e56405",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://api.airtable.com/v0/appDjV5UFVJ4O2FLB/Plantilla%20precios%20proveedores",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "airtableTokenApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filterByFormula",
+              "value": "AND({Proveedor} = \"AIMG CE\", {act n8n} = \"a1\")"
+            },
+            {
+              "name": "pageSize",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type\t",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1040,
+        880
+      ],
+      "id": "5ef04fc3-2dc3-4029-88df-10ddcac139f0",
+      "name": "HTTP Request - airtable",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "b0wDmnnKEywypn7f",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f69f8c95-ae82-458a-b3fa-c34a249a346f",
+              "name": "ID_Proveedor",
+              "value": "={{ $json.col_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "82eea370-2f8f-4c4c-b866-5627be1bef00",
+              "name": "=Costo_nuevo",
+              "value": "={{ typeof $json.col_15 === 'string'\n    ? (!isNaN(parseFloat($json.col_15.replace('.', '').replace(',', '.'))) \n        ? parseFloat($json.col_15.replace('.', '').replace(',', '.')) \n        : 0)\n    : (typeof $json.col_15 === 'number' \n        ? $json.col_15 \n        : 0) }}",
+              "type": "number"
+            },
+            {
+              "id": "5bd7051c-e1c4-4d82-9600-c0eea221c49d",
+              "name": "Proveedor",
+              "value": "AIMG CE",
+              "type": "string"
+            },
+            {
+              "id": "4708a45f-f3c7-49b4-9e9f-41ae55ce3e3d",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -820,
+        1480
+      ],
+      "id": "db0193a9-46ca-48a2-9d1d-89df50d7ca0b",
+      "name": "Edit Fields - sheet proveedor1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "10Ww5cpDfG2qXXrBpRaGh2aTQMN_heOwTHAUVWM5U1a0",
+          "mode": "list",
+          "cachedResultName": "AIMG CE Catálogo ARG DEALER ARS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10Ww5cpDfG2qXXrBpRaGh2aTQMN_heOwTHAUVWM5U1a0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1967255220,
+          "mode": "list",
+          "cachedResultName": "CATALOGO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10Ww5cpDfG2qXXrBpRaGh2aTQMN_heOwTHAUVWM5U1a0/edit#gid=1967255220"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1040,
+        1480
+      ],
+      "id": "b68bb3a4-20b2-4985-9ffc-91bbc7f05b4f",
+      "name": "Google Sheets - proveedor AIMG CE1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mYaPzDRl70LF0V57",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -520,
+        1160
+      ],
+      "id": "72cd0cbf-3be8-49dd-9b01-65caed8f3132",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "url": "https://api.airtable.com/v0/appDjV5UFVJ4O2FLB/Plantilla%20precios%20proveedores",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "airtableTokenApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filterByFormula",
+              "value": "AND({Proveedor} = \"AIMG CE\", {act n8n} = \"a2\")"
+            },
+            {
+              "name": "pageSize",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type\t",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1060,
+        1080
+      ],
+      "id": "b5b64945-cf73-48e6-8192-50fc9b1741ce",
+      "name": "HTTP Request - airtable1",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "b0wDmnnKEywypn7f",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://api.airtable.com/v0/appDjV5UFVJ4O2FLB/Plantilla%20precios%20proveedores",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "airtableTokenApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filterByFormula",
+              "value": "AND({Proveedor} = \"AIMG CE\", {act n8n} = \"a3\")"
+            },
+            {
+              "name": "pageSize",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type\t",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1040,
+        1280
+      ],
+      "id": "79aa114a-3f2d-4116-91b7-18f6462af4bd",
+      "name": "HTTP Request - airtable3",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "b0wDmnnKEywypn7f",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://api.airtable.com/v0/appDjV5UFVJ4O2FLB/Plantilla%20precios%20proveedores",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "airtableTokenApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filterByFormula",
+              "value": "AND({Proveedor} = \"AIMG CE\", {act n8n} = \"a4\")"
+            },
+            {
+              "name": "pageSize",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type\t",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1040,
+        1680
+      ],
+      "id": "adfb5757-8234-449f-9f2c-ab2a9e8f70c4",
+      "name": "HTTP Request - airtable4",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "b0wDmnnKEywypn7f",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://api.airtable.com/v0/appDjV5UFVJ4O2FLB/Plantilla%20precios%20proveedores",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "airtableTokenApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filterByFormula",
+              "value": "AND({Proveedor} = \"AIMG CE\", {act n8n} = \"a5\")"
+            },
+            {
+              "name": "pageSize",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type\t",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1040,
+        1880
+      ],
+      "id": "21e345f9-567e-4d88-81e9-2c7f461d626e",
+      "name": "HTTP Request - airtable5",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "b0wDmnnKEywypn7f",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "fields.ID_Proveedor",
+              "field2": "ID_Proveedor"
+            }
+          ]
+        },
+        "options": {
+          "clashHandling": {
+            "values": {
+              "resolveClash": "preferLast"
+            }
+          },
+          "disableDotNotation": false,
+          "fuzzyCompare": false
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -380,
+        1280
+      ],
+      "id": "bf3a819b-20c1-4e23-b738-cbc1aef9f4f6",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appDjV5UFVJ4O2FLB",
+          "mode": "list",
+          "cachedResultName": "Lista de precios TH",
+          "cachedResultUrl": "https://airtable.com/appDjV5UFVJ4O2FLB"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblvD9JYjButAhLMv",
+          "mode": "list",
+          "cachedResultName": "Plantilla precios proveedores",
+          "cachedResultUrl": "https://airtable.com/appDjV5UFVJ4O2FLB/tblvD9JYjButAhLMv"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Costo": "={{ $json.Costo_nuevo }}",
+            "ID_Proveedor": "={{ $json.ID_Proveedor }}"
+          },
+          "matchingColumns": [
+            "ID_Proveedor"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "ID_Proveedor",
+              "displayName": "ID_Proveedor",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nombre del producto",
+              "displayName": "Nombre del producto",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Proveedor",
+              "displayName": "Proveedor",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "AIMG CE",
+                  "value": "AIMG CE"
+                },
+                {
+                  "name": "LAUFQUEN",
+                  "value": "LAUFQUEN"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Costo",
+              "displayName": "Costo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha de actualización",
+              "displayName": "Fecha de actualización",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Activo",
+              "displayName": "Activo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Notas",
+              "displayName": "Notas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "record_id",
+              "displayName": "record_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": false,
+          "updateAllMatches": false
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        1280
+      ],
+      "id": "bec02f3e-0b61-4473-9413-f04dba86c713",
+      "name": "Airtable1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "b0wDmnnKEywypn7f",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "records",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -820,
+        880
+      ],
+      "id": "be37eed8-f560-4644-8552-dcc2f5ccf61a",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "records",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -820,
+        1080
+      ],
+      "id": "464532f9-2b36-4fe3-9053-1883f41845a5",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "records",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -820,
+        1680
+      ],
+      "id": "93192f87-d868-4354-885e-b9f07052c291",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "records",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -820,
+        1280
+      ],
+      "id": "1e12892d-a118-40ec-98b5-0a35d3d8bb2a",
+      "name": "Split Out3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "records",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -820,
+        1880
+      ],
+      "id": "3cec56df-f47f-4de4-92d2-b0edcd1739dd",
+      "name": "Split Out4"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appDjV5UFVJ4O2FLB",
+          "mode": "list",
+          "cachedResultName": "Lista de precios TH",
+          "cachedResultUrl": "https://airtable.com/appDjV5UFVJ4O2FLB"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblvD9JYjButAhLMv",
+          "mode": "list",
+          "cachedResultName": "Plantilla precios proveedores",
+          "cachedResultUrl": "https://airtable.com/appDjV5UFVJ4O2FLB/tblvD9JYjButAhLMv"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Costo": "={{ $json.Costo_nuevo }}",
+            "ID_Proveedor": "={{ $json.ID_Proveedor }}"
+          },
+          "matchingColumns": [
+            "ID_Proveedor"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "ID_Proveedor",
+              "displayName": "ID_Proveedor",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nombre del producto",
+              "displayName": "Nombre del producto",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Proveedor",
+              "displayName": "Proveedor",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "AIMG CE",
+                  "value": "AIMG CE"
+                },
+                {
+                  "name": "LAUFQUEN",
+                  "value": "LAUFQUEN"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Costo",
+              "displayName": "Costo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha de actualización",
+              "displayName": "Fecha de actualización",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Activo",
+              "displayName": "Activo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Notas",
+              "displayName": "Notas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "record_id",
+              "displayName": "record_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": false,
+          "updateAllMatches": false
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        1880
+      ],
+      "id": "e742f6f0-c44d-4778-a439-aa6345f07bfa",
+      "name": "Airtable2",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "b0wDmnnKEywypn7f",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "fields.ID_Proveedor",
+              "field2": "ID_Proveedor"
+            }
+          ]
+        },
+        "options": {
+          "clashHandling": {
+            "values": {
+              "resolveClash": "preferLast"
+            }
+          },
+          "disableDotNotation": false,
+          "fuzzyCompare": false
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -380,
+        1880
+      ],
+      "id": "258ed1d6-8d0b-4998-9f76-85335dcb306f",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -600,
+        1780
+      ],
+      "id": "ece0ea96-0a13-4bf5-afa1-c9ddd17f711b",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f69f8c95-ae82-458a-b3fa-c34a249a346f",
+              "name": "ID_Proveedor",
+              "value": "={{ $json.col_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "82eea370-2f8f-4c4c-b866-5627be1bef00",
+              "name": "=Costo_nuevo",
+              "value": "={{ typeof $json.col_15 === 'string'\n    ? (!isNaN(parseFloat($json.col_15.replace('.', '').replace(',', '.'))) \n        ? parseFloat($json.col_15.replace('.', '').replace(',', '.')) \n        : 0)\n    : (typeof $json.col_15 === 'number' \n        ? $json.col_15 \n        : 0) }}",
+              "type": "number"
+            },
+            {
+              "id": "5bd7051c-e1c4-4d82-9600-c0eea221c49d",
+              "name": "Proveedor",
+              "value": "AIMG CE",
+              "type": "string"
+            },
+            {
+              "id": "4708a45f-f3c7-49b4-9e9f-41ae55ce3e3d",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -820,
+        2080
+      ],
+      "id": "2b01696f-be77-4ae9-a126-fe1bc9a943c8",
+      "name": "Edit Fields - sheet proveedor2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "10Ww5cpDfG2qXXrBpRaGh2aTQMN_heOwTHAUVWM5U1a0",
+          "mode": "list",
+          "cachedResultName": "AIMG CE Catálogo ARG DEALER ARS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10Ww5cpDfG2qXXrBpRaGh2aTQMN_heOwTHAUVWM5U1a0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1967255220,
+          "mode": "list",
+          "cachedResultName": "CATALOGO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10Ww5cpDfG2qXXrBpRaGh2aTQMN_heOwTHAUVWM5U1a0/edit#gid=1967255220"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1040,
+        2080
+      ],
+      "id": "8ecba0e7-bd02-4622-8411-aa887eaa7f6b",
+      "name": "Google Sheets - proveedor AIMG CE2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mYaPzDRl70LF0V57",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request - airtable",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request - airtable1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request - airtable3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request - airtable4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request - airtable5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets - proveedor AIMG CE1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets - proveedor AIMG CE2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - proveedor AIMG CE1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - sheet proveedor1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - airtable": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - sheet proveedor1": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request - airtable1": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - airtable3": {
+      "main": [
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - airtable4": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - airtable5": {
+      "main": [
+        [
+          {
+            "node": "Split Out4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out4": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Airtable1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Airtable2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - proveedor AIMG CE2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - sheet proveedor2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - sheet proveedor2": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5e3aaa53-81b4-4533-a7c7-3af6099b4a63",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a361c99fff016ed20927848e2faa8f35601d252bdb67af0520aa1652af4d6de8"
+  },
+  "id": "CbMMCdUPSRwxBZN8",
+  "tags": []
+}
